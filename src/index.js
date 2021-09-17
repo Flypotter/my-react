@@ -1,17 +1,36 @@
+import ReactDOM from './kreact/react-dom';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import Component from './kreact/Component';
+
+class ClassComponent extends Component {
+  render() {
+    return (
+      <div className="border">
+        <p>类组件名-{this.props.name}</p>
+      </div>
+    )
+  }
+}
+
+function FunctionComponent(props) {
+  return (
+    <div className="border">
+      <p>函数组件名-{props.name}</p>
+    </div>
+  )
+}
+
+const ele = (
+  <div>
+    你好
+    <h3>hello, react</h3>
+    {/* <FunctionComponent name="123" />
+    <ClassComponent name="456" /> */}
+  </div>
+);
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  ele,
   document.getElementById('root')
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
