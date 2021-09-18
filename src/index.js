@@ -24,8 +24,8 @@ const ele = (
   <div>
     你好
     <h3>hello, react</h3>
-    {/* <FunctionComponent name="123" />
-    <ClassComponent name="456" /> */}
+    <FunctionComponent name="123" />
+    {/* <ClassComponent name="456" /> */}
   </div>
 );
 

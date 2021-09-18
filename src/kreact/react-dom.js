@@ -18,15 +18,6 @@ function render(vnode, container) {
     nextUnitOfWork = wipRoot;
 }
 
-function createNode(workInProgress) {
-    const { type } = workInProgress;
-
-    const node = document.createElement(type);
-    updateNode(node, workInProgress.props);
-
-    return node;
-}
-
 //类组件
 // function updateClassComponent(vnode) {
 //     const { type, props } = vnode;
@@ -46,6 +37,16 @@ function updateHostComponent(workInProgress) {
 
     console.log('workInProgress', workInProgress);
 }
+
+function createNode(workInProgress) {
+    const { type } = workInProgress;
+
+    const node = document.createElement(type);
+    updateNode(node, workInProgress.props);
+
+    return node;
+}
+
 
 //更新属性
 function updateNode(node, nextVal) {
@@ -75,13 +76,11 @@ function updateNode(node, nextVal) {
 // }
 
 //函数组件
-// function updateFunctionComponent(vnode) {
-//     const { type, props } = vnode;
-//     const vvnode = type(props);
-//     const node = createNode(vvnode);
-//     console.log(vvnode);
-//     return node;
-// }
+function updateFunctionComponent(workInProgress) {
+    const { type, props } = workInProgress;
+    let children = type(props);
+    reconcileChildren(workInProgress, children);
+}
 
 function reconcileChildren(workInProgress, children) {
     if (typeof children === 'string' || typeof children === 'number') {
@@ -129,7 +128,10 @@ function performUnitOfWork(workInProgress) {
     if (typeof type === 'string') {
         //原生标签节点
         updateHostComponent(workInProgress);
+    } else if (typeof type === 'function') {
+        updateFunctionComponent(workInProgress);
     }
+
     //返回下一个执行任务
     if (workInProgress.child) {
         return workInProgress.child;
@@ -158,7 +160,6 @@ requestIdleCallback(workLoop);
 
 function commitRoot() {
     commitWork(wipRoot.child);
-    console.log('2', wipRoot);
     wipRoot = null;
 }
 
@@ -169,6 +170,10 @@ function commitWork(workInProgress) {
     }
     console.log('1', workInProgress);
     let parentNodeFiber = workInProgress.return;
+    //父fiber不一定有dom节点，如函数组件
+    while (!parentNodeFiber.stateNode) {
+        parentNodeFiber = workInProgress.return;
+    }
     let parentNode = parentNodeFiber.stateNode;
 
     if (workInProgress.stateNode) {
